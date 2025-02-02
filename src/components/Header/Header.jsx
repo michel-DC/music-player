@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "./Header.css";
 import { toast } from "react-toastify";
 import { PiMusicNotesBold } from "react-icons/pi";
 import ReactPlayer from "react-player";
@@ -21,7 +22,26 @@ function Header() {
   const [inputModal, setInputModal] = useState(false);
   const [userImage, setUserImage] = useState("");
   const handleImageChange = (e) => {
-    setUserImage(e.target.value);
+    const file = e.target.value;
+    setUserImage(file);
+  };
+
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      borderRadius: "24px",
+      backgroundColor: "#1b2328",
+      height: "auto",
+      width: inputModal && "56vw",
+    },
+    overlay: {
+      backgroundColor: "rgba(0,0,0,0.6)",
+    },
   };
 
   function openModal() {
@@ -29,6 +49,8 @@ function Header() {
     setInput("");
     setUserImage("");
   }
+
+  //* code for input
 
   const [input, setInput] = useState("");
 
@@ -38,12 +60,28 @@ function Header() {
     if (workingURL) {
       setIsOpen(true);
       setInputModal(false);
+      // setInput("")
     } else {
-      toast.error("URL invalide, saisissez un lien valide.");
+      toast.error("URL invalide, saisissez un lien valide.", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
-  const [song, setSong] = useState(DEFAULT_SONG);
+  //* song code
+  const [song, setSong] = useState({
+    Duration: 0,
+    Title: "",
+    Artist: "",
+    Thumbnail: "",
+  });
 
   const [addSong] = useMutation(ADD_SONG);
 
@@ -53,6 +91,7 @@ function Header() {
       let titleData;
       if (ourPlayer.getVideoData) {
         titleData = getYoutubeInfo(ourPlayer);
+        console.log(titleData);
       } else if (ourPlayer.getCurrentSound) {
         titleData = await getSoundCloudInfo(ourPlayer);
       }
@@ -77,6 +116,7 @@ function Header() {
   const getSoundCloudInfo = (player) => {
     return new Promise((resolve) => {
       player.getCurrentSound((songData) => {
+        console.log(songData);
         if (songData) {
           resolve({
             Duration: Number(songData.duration / 1000),
@@ -100,19 +140,41 @@ function Header() {
       await addSong({
         variables: {
           Duration,
-          Title: Title || null,
-          Artist: Artist || null,
-          Thumbnail: userImage || Thumbnail || null,
-          URL: input || null,
+          Title: Title.length > 0 ? Title : null,
+          Artist: Artist.length > 0 ? Artist : null,
+          Thumbnail: userImage
+            ? userImage
+            : Thumbnail.length > 0
+            ? Thumbnail
+            : null,
+          URL: input.length > 0 ? input : null,
         },
       });
       setSong(DEFAULT_SONG);
       setIsOpen(false);
       setInput("");
-      toast.success("Chanson ajoutée !");
+      toast.success("Song Added :)", {
+        position: "top-right",
+        autoClose: 1000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     } catch (err) {
       console.log(err);
-      toast.error("Veuillez remplir correctement les champs.");
+      toast.error("Veuillez fournir les valeurs requises correctement", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+      });
     }
   };
 
@@ -120,11 +182,11 @@ function Header() {
 
   return (
     <>
-      <header className="flex items-center justify-between h-16 bg-gray-900 px-5 shadow-md border-b border-gray-800">
-        <PiMusicNotesBold className="text-white text-2xl cursor-pointer" />
-        <form onSubmit={handleInput} className="hidden md:flex">
+      <header>
+        <PiMusicNotesBold className="music-icon" />
+        <form onSubmit={handleInput}>
           <input
-            className="bg-gray-800 text-white px-4 py-2 rounded-full w-72 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="input-search"
             onChange={(e) => setInput(e.target.value)}
             value={input}
             placeholder="Ajouter un lien Youtube ou SoundCloud"
@@ -133,21 +195,21 @@ function Header() {
         </form>
         <div>
           <TbInputSearch
-            className="text-white text-2xl cursor-pointer md:hidden"
+            className="search-icon"
             onClick={() => setInputModal(true)}
           />
           <Modal
             isOpen={inputModal}
             onRequestClose={() => setInputModal(false)}
-            contentLabel="Ajouter un lien"
+            style={customStyles}
+            contentLabel="URL pour ajouter une musique"
           >
-            <form onSubmit={handleInput} className="flex flex-col p-5">
+            <form onSubmit={handleInput} className="mobile-modal">
               <input
                 onChange={(e) => setInput(e.target.value)}
                 value={input}
-                placeholder="Ajouter un lien"
+                placeholder="Ajouter un lien Youtube ou SoundCloud"
                 type="text"
-                className="bg-gray-700 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </form>
           </Modal>
@@ -155,30 +217,25 @@ function Header() {
         <Modal
           isOpen={modalIsOpen}
           onRequestClose={openModal}
+          style={customStyles}
           contentLabel="Ajouter une musique"
         >
-          <div className="bg-gray-800 p-6 rounded-lg flex flex-col items-center space-y-4 w-80 md:w-[60vw]">
+          <div className="modal-container">
             <ReactPlayer url={input} hidden onReady={handleSongEdit} />
-            <img
-              src={userImage || Thumbnail}
-              alt={Artist}
-              className="w-full rounded-lg"
-            />
-            <label className="text-white text-lg">
-              *Choisissez une couverture*
-            </label>
+            <img src={userImage ? userImage : Thumbnail} alt={Artist} />
+            <label>*Choisissez une couverture pour votre musique*</label>
             <input
               type="text"
-              placeholder="Insérez le lien de l'image"
+              placeholder="Inserez le lien de l'image"
               onChange={handleImageChange}
-              className="bg-gray-700 text-white px-4 py-2 rounded-md w-full focus:outline-none"
             />
             <input
               value={Artist}
               onChange={handleInputChange}
               placeholder="Nom de l'artiste"
               name="Artist"
-              className="bg-gray-700 text-white px-4 py-2 rounded-md w-full focus:outline-none"
+              label="artist"
+              className="custom-input"
               required
             />
             <input
@@ -186,14 +243,11 @@ function Header() {
               onChange={handleInputChange}
               placeholder="Nom de la musique"
               name="Title"
-              className="bg-gray-700 text-white px-4 py-2 rounded-md w-full focus:outline-none"
+              label="title"
+              className="custom-input"
               required
             />
-            <button
-              type="submit"
-              onClick={() => addSongToDB(song)}
-              className="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition-all"
-            >
+            <button type="submit" onClick={() => addSongToDB(song)}>
               Ajouter
             </button>
           </div>

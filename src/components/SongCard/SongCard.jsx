@@ -1,49 +1,41 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./SongCard.css";
 import { TbMusicPlus } from "react-icons/tb";
-import { AiFillPlayCircle } from "react-icons/ai";
+import { SongContext } from "../../context/Context";
 import { useSubscription, useMutation } from "@apollo/client";
-import { SongContext } from "../../context/context";
 import { GET_SONGS } from "../../utils/subscription";
 import { ADD_OR_REMOVE_FROM_QUEUE } from "../../utils/mutations";
+import { AiFillPlayCircle } from "react-icons/ai";
 
 export default function SongCard() {
   const { data } = useSubscription(GET_SONGS);
 
   return (
     <div>
-      {data?.Music?.map((song) => (
-        <Song song={song} key={song.ID} />
+      {data?.Music.map((item) => (
+        <Song song={item} key={item.ID} />
       ))}
     </div>
   );
 }
 
 function Song({ song }) {
-  if (!song) return null;
-
-  const { Title, Thumbnail, Artist, ID } = song;
+  const { Title, Thumbnail, Artist } = song;
   const { state, dispatch } = useContext(SongContext);
   const [currentSongSelected, setCurrentSongSelected] = useState(false);
-
   useEffect(() => {
-    setCurrentSongSelected(state.isPlaying && ID === state.song?.ID);
-  }, [state.isPlaying, state.song, ID]);
+    const thisSongIsPlaying = state.isPlaying && song.ID === state.song.ID;
+    setCurrentSongSelected(thisSongIsPlaying);
+  }, [state.song.ID, song.ID, state.isPlaying]);
 
   function handleTogglePlay() {
     dispatch({ type: "SET_SONG", payload: { song } });
-    dispatch({ type: state.isPlaying ? "PAUSE_SONG" : "PLAY_SONG" });
+    dispatch(state.isPlaying ? { type: "PAUSE_SONG" } : { type: "PLAY_SONG" });
   }
 
   const [addOrRemoveFromQueue] = useMutation(ADD_OR_REMOVE_FROM_QUEUE, {
-    onCompleted: (data) => {
-      if (data?.addOrRemoveFromQueue) {
-        localStorage.setItem(
-          "queue",
-          JSON.stringify(data.addOrRemoveFromQueue)
-        );
-      }
-    },
+    onCompleted: (data) =>
+      localStorage.setItem("queue", JSON.stringify(data.addOrRemoveFromQueue)),
   });
 
   const handleAddOrRemoveFromQueue = () => {
@@ -55,14 +47,10 @@ function Song({ song }) {
   };
 
   return (
-    <div
-      className={`container-border-box ${
-        currentSongSelected ? "selected" : ""
-      }`}
-    >
+    <div className="container-border-box">
       <section className="playlist-row">
         <div className="playlist-container">
-          <img src={Thumbnail} alt={`Thumbnail of ${Title}`} />
+          <img src={Thumbnail} alt="song thumbnail" />
           <div className="playlist-info">
             <h1>{Title}</h1>
             <h2>{Artist}</h2>

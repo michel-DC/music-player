@@ -1,6 +1,6 @@
-import { useContext, useRef, useState, useEffect } from "react";
-import { useQuery } from "@apollo/client";
+import React, { useContext, useRef, useState, useEffect } from "react";
 import { GET_QUEUED_SONGS } from "../../utils/queries";
+import { useQuery } from "@apollo/client";
 import { SongContext } from "../../context/Context";
 import "./PlayingNext.css";
 import { BsFillPlayFill } from "react-icons/bs";
@@ -10,81 +10,73 @@ import ReactPlayer from "react-player";
 
 function PlayingNext() {
   const { state, dispatch } = useContext(SongContext);
-  const [sliderValue, setSliderValue] = useState(0);
-  const [isSliding, setIsSliding] = useState(false);
+  const [play, setPlay] = useState(0);
+  const [sliding, setSliding] = useState(false);
   const [playedSeconds, setPlayedSeconds] = useState(0);
-  const [currentSongIndex, setCurrentSongIndex] = useState(-1);
   const reactPlayerRef = useRef();
-  const { data, loading, error } = useQuery(GET_QUEUED_SONGS);
+  const [positionInQueue, setPositionInQueue] = useState(0);
+  const { data } = useQuery(GET_QUEUED_SONGS);
 
-  // Handle play/pause toggle
   function handleTogglePlay() {
     dispatch(state.isPlaying ? { type: "PAUSE_SONG" } : { type: "PLAY_SONG" });
   }
 
-  // Handle slider changes
-  function handleProgressChange(event) {
-    const value = parseFloat(event.target.value);
-    setSliderValue(value);
+  function handleProgressChange(event, newValue) {
+    //! ask byron
+    //  setPlay(newValue);
+    // console.log(newValue, 'new value')
+    setPlay(event.target.value);
   }
 
   function handleMouseDown() {
-    setIsSliding(true);
+    setSliding(true);
   }
 
   function handleMouseUp() {
-    setIsSliding(false);
-    reactPlayerRef.current.seekTo(sliderValue);
+    setSliding(false);
+    // console.log(reactPlayerRef.current.seekTo(play), 'player')
+    reactPlayerRef.current.seekTo(play);
   }
 
-  // Format duration into HH:MM:SS
   function formatDuration(seconds) {
     return new Date(seconds * 1000).toISOString().substring(11, 19);
   }
 
-  // Navigate to the next song
   function handleNextSong() {
-    if (currentSongIndex >= 0 && currentSongIndex < data?.queue.length - 1) {
-      const nextSong = data.queue[currentSongIndex + 1];
+    const nextSong = data?.queue[positionInQueue + 1];
+    if (nextSong) {
       dispatch({ type: "SET_SONG", payload: { song: nextSong } });
     }
   }
 
-  // Navigate to the previous song
   function handlePrevSong() {
-    if (currentSongIndex > 0) {
-      const prevSong = data.queue[currentSongIndex - 1];
+    const prevSong = data?.queue[positionInQueue - 1];
+    if (prevSong) {
       dispatch({ type: "SET_SONG", payload: { song: prevSong } });
     }
   }
 
-  // Update the current song index whenever the queue or current song changes
   useEffect(() => {
-    if (data?.queue && state.song) {
-      const songIndex = data.queue.findIndex(
-        (song) => song.ID === state.song.ID
-      );
-      setCurrentSongIndex(songIndex);
-    }
-  }, [data?.queue, state.song]);
+    const songIndex = data?.queue.findIndex(
+      (song) => song.ID === state.song.ID
+    );
+    setPositionInQueue(songIndex);
+  }, [data?.queue, state.song.ID]);
 
-  // Auto-play the next song when the current song ends
   useEffect(() => {
-    if (sliderValue >= 1) {
-      handleNextSong();
+    const nextSong = data?.queue[positionInQueue + 1];
+    if (play === 1 && nextSong) {
+      setPlay(0);
+      dispatch({ type: "SET_SONG", payload: { song: nextSong } });
     }
-  }, [sliderValue, handleNextSong]);
-
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-  if (!state.song) return <p>No song is currently playing.</p>;
+  }, [play, data?.queue, dispatch, positionInQueue]);
 
   return (
     <div className="playing-container">
       <img
         src={state.song.Thumbnail}
-        alt="Current song"
-        className={state.isPlaying ? "rotating-disc" : ""}
+        alt="song"
+        className={state.isPlaying && "rotating-disc"}
       />
       <section className="playing-song-info">
         <h4>{state.song.Title}</h4>
@@ -100,7 +92,7 @@ function PlayingNext() {
         <TbChevronsRight className="playing-btns" onClick={handleNextSong} />
       </section>
       <input
-        value={sliderValue}
+        value={play}
         type="range"
         min={0}
         max={1}
@@ -116,14 +108,14 @@ function PlayingNext() {
         playing={state.isPlaying}
         ref={reactPlayerRef}
         onProgress={({ played, playedSeconds }) => {
-          if (!isSliding) {
-            setSliderValue(played);
+          if (!sliding) {
+            setPlay(played);
             setPlayedSeconds(playedSeconds);
           }
         }}
-        onEnded={handleNextSong}
         hidden
       />
+      {/* <Queue queue={data}/> */}
     </div>
   );
 }

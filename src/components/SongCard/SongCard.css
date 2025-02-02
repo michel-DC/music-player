@@ -5,15 +5,19 @@
 }
 
 .container-border-box {
+  margin-top: 10px; /* Réduit l'espace au-dessus */
+  margin-bottom: 200px;
   border: 5px solid white;
   width: 500px;
   height: 500px;
 }
 
 .playlist-container {
+  margin-top: 100px; /* Réduit l'espace au-dessus de la playlist */
   display: flex;
   padding-right: 50px;
 }
+
 .playlist-container img {
   width: 90px;
   height: 90px;
