@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Urbanist&display=swap");
+@import "tailwindcss";
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Urbanist", sans-serif;
+}
+body {
+  background-color: #1b2328;
+}
+a {
+  text-decoration: none;
+}
+.playlist-section {
+  letter-spacing: 3px;
+  font-size: 1.5rem;
+  color: #f9f6ee;
+  padding: 20px 13px;
+}
+.playlist-centering {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 100px 80px 100px;
+}
+
+@media screen and (max-width: 508px) {
+  .playlist-centering {
+    padding: 0px 0px 0px 0px;
+  }
+}

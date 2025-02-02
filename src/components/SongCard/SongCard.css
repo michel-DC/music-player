@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900");
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+.container-border-box {
+  border: 5px solid white;
+  width: 500px;
+  height: 500px;
+}
+
+.playlist-container {
+  display: flex;
+  padding-right: 50px;
+}
+.playlist-container img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  margin: 10px 20px 10px 10px;
+  -webkit-user-drag: none;
+}
+
+.playlist-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.playlist-info h1 {
+  font-size: 1.2rem;
+  color: lightblue;
+}
+.playlist-info h2 {
+  font-size: 1rem;
+}
+.playlist-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #f9f6ee;
+}
+.playlist-add-song {
+  font-size: 1.5rem;
+}
+.playlist-playbtn {
+  margin-right: 20px;
+}
+.playlist-playbtn:hover {
+  color: lightblue;
+  cursor: pointer;
+}
+.playlist-addbtn:hover {
+  color: lightblue;
+  cursor: pointer;
+}
+.playlist-edit {
+  display: flex;
+}
+
+@media screen and (max-width: 508px) {
+  .playlist-container img {
+    width: 100px;
+    height: 90px;
+    margin: 10px 20px 10px 10px;
+    -webkit-user-drag: none;
+  }
+  .playlist-addbtn {
+    margin: 0 5px 0 10px;
+  }
+
+  .playlist-playbtn {
+    margin-right: 0px;
+  }
+  .playlist-addbtn {
+    margin-right: 15px;
+  }
+}

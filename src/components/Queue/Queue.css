@@ -1,0 +1,100 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900");
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+.Queue-container {
+  color: #f9f6ee;
+  display: flex;
+  flex-direction: column;
+}
+
+.q-container img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  margin: 10px 20px 10px 0px;
+}
+
+.q-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.q-songCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.q-songCard h1 {
+  font-size: 1.2rem;
+  color: lightblue;
+}
+
+.q-songCard h2 {
+  font-size: 1rem;
+  padding-top: 8px;
+}
+
+.q-container button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.q-container button:hover {
+  color: red;
+  cursor: pointer;
+  animation: shake 2s ease;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(5px);
+  }
+}
+
+.q-leftSide {
+  display: flex;
+  align-items: center;
+}
+
+@media screen and (max-width: 508px) {
+  .q-container img {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    margin: 0px 20px 0px 0px;
+  }
+
+  .q-container button {
+    margin-right: 10px;
+  }
+
+  .q-container {
+    padding: 10px;
+  }
+
+  .q-songCard h1 {
+    font-size: 1rem;
+  }
+
+  .q-songCard h2 {
+    font-size: 0.8rem;
+  }
+}
