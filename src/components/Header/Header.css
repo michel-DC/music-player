@@ -18,11 +18,11 @@ header {
 
 header input {
   border: none;
-  border-radius: 50px;
+  border-radius: 20px;
   padding-left: 20px;
   letter-spacing: 0.5px;
   height: 4vh;
-  width: 30vw;
+  width: 35vw;
   margin-top: 10px;
   background-color: #333;
   color: #fff;
@@ -34,6 +34,13 @@ header input:focus {
   outline: none;
   background-color: #222;
   box-shadow: 0 0 8px rgba(0, 180, 255, 0.6);
+}
+
+header form {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  width: 45vw;
 }
 
 .music-icon,
@@ -56,6 +63,7 @@ header input:focus {
   background-color: #3a4349;
   padding: 8px;
   transition: all 0.3s ease;
+  width: 35vw;
 }
 
 .input-search:focus {

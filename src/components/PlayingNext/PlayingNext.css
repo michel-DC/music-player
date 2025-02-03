@@ -31,7 +31,13 @@
   color: #33ccff; /* Bleu turquoise pour le titre */
 }
 
+.controls {
+  display: flex;
+  margin-right: 60px;
+}
+
 .playing-btns {
+  display: flex;
   font-size: 3rem;
   margin: 0px 20px;
   color: #f4f4f4; /* Blanc cassé */
@@ -39,6 +45,18 @@
 }
 
 .playing-btns:hover {
+  color: #00bcd4; /* Bleu clair au survol */
+}
+
+.repeat-btn {
+  padding-top: 5px;
+  font-size: 2.5rem;
+  margin: 0px 20px;
+  color: #f4f4f4; /* Blanc cassé */
+  transition: color 0.3s ease;
+}
+
+.repeat-btn:hover {
   color: #00bcd4; /* Bleu clair au survol */
 }
 
