@@ -52,7 +52,7 @@ A modern, feature-rich music player built with React, supporting YouTube and Sou
 ### 🛠️ Installation
 
 ```bash
-git clone https://github.com/yourusername/react-music-player.git
+git clone https://github.com/yourusername/react-music-player.git](https://github.com/michel-DC/Music-Player-main.git
 cd react-music-player
 npm install
 ```
