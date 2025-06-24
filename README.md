@@ -4,7 +4,7 @@
 
 A modern, feature-rich music player built with React, supporting YouTube and SoundCloud playback for a seamless music experience.
 
-![Music Player Screenshot](screenshots/player.png)
+![Home Page](images-readme/1.png)
 
 </div>
 
